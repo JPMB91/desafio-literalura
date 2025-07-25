@@ -10,20 +10,18 @@ public class ApiConsumption {
 
     public String getInformation(String url){
 
-        HttpResponse<String> response;
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .build();
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .build();
 
-            response = null;
+        HttpResponse<String> response = null;
 
-            try {
-                response = client
-                        .send(request, HttpResponse.BodyHandlers.ofString());
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            response = client
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
         return response.body();
