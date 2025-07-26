@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,18 +22,27 @@ public class Book {
     @JsonAlias("title")
     private String titulo;
 
-    @ManyToMany( fetch = FetchType.EAGER)
+    @ManyToMany(
+            cascade = CascadeType.MERGE,
+            fetch   = FetchType.EAGER
+    )
     @JoinTable(
             name = "book_authors",
-            joinColumns = @JoinColumn(name = "book_id"),
+            joinColumns =  @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-    private List<Author> autores;
+    private List<Author> autores = new ArrayList<>();
 
     @JsonAlias("download_count")
     private int numeroDescargas;
 
-    private List<String> idiomas;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "book_idiomas",
+            joinColumns = @JoinColumn(name = "book_id")
+    )
+    @Column(name = "idioma")
+    private List<String> idiomas = new ArrayList<>();
 
     public Book() {
     }
@@ -69,16 +79,19 @@ public class Book {
     @Override
     public String toString() {
         return """
+                \n
                 ------------LIBRO-----------------
                 Titulo: %s
                 Autor: %s
                 Numero de descargas: %d
                 Idiomas: %s
                 ----------------------------------""".formatted(
+
                 titulo,
                 autores.stream().map(Author::getNombre).collect(Collectors.joining("\n")),
                 numeroDescargas,
                 String.join(",", idiomas)
+
         );
     }
 }

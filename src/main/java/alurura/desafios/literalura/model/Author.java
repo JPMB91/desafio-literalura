@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,7 +23,7 @@ public class Author {
     @JsonAlias("death_year")
     private int fallecimiento;
 
-    @ManyToMany(mappedBy = "autores",fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "autores", fetch = FetchType.EAGER)
     private List<Book> libros;
 
     public Author() {
@@ -59,7 +58,7 @@ public class Author {
     @Override
     public String toString() {
         return """
-           
+                           
                 Autor: %s
                 Fecha de nacimiento: %d
                 Fecha de fallecimiento: %d
@@ -69,9 +68,9 @@ public class Author {
                 nombre,
                 nacimiento,
                 fallecimiento,
-                "[" + libros.stream()
+                libros.stream()
                         .map(Book::getTitulo)
-                        .collect(Collectors.joining(", ")) + "]"
+                        .toList()
         );
     }
 
